@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="eu.pp.test.testWS"
+		   targetNamespace="eu.pp.test.testWS"
+		   elementFormDefault="qualified"
+		   version="1.0">
+
+	<!-- Types definitions -->
+	<xs:complexType name="TService">
+		<xs:annotation>
+			<xs:documentation>Service parameters</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="id" type="xs:string" minOccurs="0"/>
+			<xs:element name="testMode" type="xs:string" minOccurs="0"/>
+			<xs:element name="parameters" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>	
+	<xs:complexType name="TResponse">
+		<xs:sequence>
+			<xs:element name="code" type="xs:int"/>
+			<xs:element name="text" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TServiceRequest">
+		<xs:sequence>
+			<xs:element name="service" type="TService"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TServiceResponse">
+		<xs:sequence>
+			<xs:element name="status" type="TResponse"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TParameterRequest">
+		<xs:sequence>
+			<xs:element name="parameter" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>	
+	<!-- Elements definitions-->
+	<!-- Test methods elements  -->
+	<xs:element name="versionCall"/>
+	<xs:element name="simpleTestCall" type="TParameterRequest"/>
+	<xs:element name="dbTestCall" type="TParameterRequest"/>
+	<xs:element name="serviceCall" type="TServiceRequest"/>
+	<xs:element name="testResult" type="TResponse"/>
+</xs:schema>

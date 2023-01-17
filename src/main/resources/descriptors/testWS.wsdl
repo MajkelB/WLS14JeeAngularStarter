@@ -1,0 +1,99 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+			 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+			 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			 xmlns:tns="eu.pp.test.testWS"
+			 xmlns:xsd="eu.pp.test.testWS"
+			 name="eu.pp.test.testWS"
+			 targetNamespace="eu.pp.test.testWS">
+<!--	xmlns:wsp="http://www.w3.org/2002/ws/policy/ns/ws-policy"-->
+<!--	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"-->
+<!--	xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy"-->
+<!--	xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"-->
+
+	<documentation>
+		<version>1</version>
+		<description>SOAP Test Service</description>
+	</documentation>
+	<types>
+		<xs:schema>
+			<xs:import namespace="eu.pp.test.testWS" schemaLocation="testWS.xsd"/>
+		</xs:schema>
+	</types>
+	<message name="versionCall">
+		<part name="body" element="xsd:versionCall"/>
+	</message>
+	<message name="simpleTestCall">
+		<part name="body" element="xsd:simpleTestCall"/>
+	</message>		
+	<message name="dbTestCall">
+		<part name="body" element="xsd:dbTestCall"/>
+	</message>			
+	<message name="serviceCall">
+		<part name="body" element="xsd:serviceCall"/>
+	</message>
+	<message name="testResult">
+		<part name="body" element="xsd:testResult"/>
+	</message>
+	<portType name="testWS">
+		<operation name="version">
+			<input message="tns:versionCall"/>
+			<output message="tns:testResult"/>
+		</operation>		
+		<operation name="simpleTestWS">
+			<input message="tns:simpleTestCall"/>
+			<output message="tns:testResult"/>
+		</operation>		
+		<operation name="dbTestWS">
+			<input message="tns:dbTestCall"/>
+			<output message="tns:testResult"/>
+		</operation>		
+		<operation name="callTestWS">
+			<input message="tns:serviceCall"/>
+			<output message="tns:testResult"/>
+		</operation>			
+	</portType>
+	<binding name="testWS" type="tns:testWS">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="version">
+			<soap:operation soapAction="version"/>
+			<input>
+				<soap:body parts="body" use="literal"/>
+			</input>
+			<output>
+				<soap:body parts="body" use="literal"/>
+			</output>
+		</operation>		
+		<operation name="simpleTestWS">
+			<soap:operation soapAction="simpleTestWS"/>
+			<input>
+				<soap:body parts="body" use="literal"/>
+			</input>
+			<output>
+				<soap:body parts="body" use="literal"/>
+			</output>
+		</operation>
+		<operation name="dbTestWS">
+			<soap:operation soapAction="dbTestWS"/>
+			<input>
+				<soap:body parts="body" use="literal"/>
+			</input>
+			<output>
+				<soap:body parts="body" use="literal"/>
+			</output>
+		</operation>
+		<operation name="callTestWS">
+			<soap:operation soapAction="callTestWS"/>
+			<input>
+				<soap:body parts="body" use="literal"/>
+			</input>
+			<output>
+				<soap:body parts="body" use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="eu.pp.test.testWS">
+		<port name="testWS" binding="tns:testWS">
+			<soap:address location="auto"/>
+		</port>
+	</service>
+</definitions>
