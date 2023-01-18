@@ -42,9 +42,176 @@
         <!-- others -->
         <exec.ng>ng</exec.ng>
         <exec.npm>npm</exec.npm>
-        <swagger.version>1.6.9</swagger.version>
+<!--        <swagger.version>1.6.9</swagger.version>-->
     </properties>
 
+
+
+    <build>
+        <finalName>wls</finalName>
+        <resources>
+<!--            <resource>-->
+<!--                <directory>${basedir}/src/main/resources</directory>-->
+<!--                <targetPath>${project.build.directory}/${project.build.finalName}/assets/info</targetPath>-->
+<!--                <excludes>-->
+<!--                    <exclude>**/*.java</exclude>-->
+<!--                </excludes>-->
+<!--            </resource>-->
+            <resource>
+<!--                <targetPath>${project.build.directory}/${project.artifactId}-${project.version}/assets/info</targetPath>-->
+                <targetPath>${project.build.directory}/${project.build.finalName}/assets/info</targetPath>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/version.json</include>
+                </includes>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>dynamic/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>frontend/coverage/**</include>
+                                <include>frontend/dist/**</include>
+                                <!--<include>frontend/node_modules/**</include>-->
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build.helper.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${sources.generated.location}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>build.time</name>
+                            <pattern>yyyy-MM-dd HH:mm:ss</pattern>
+                            <locale>pl_PL</locale>
+                            <timeZone>CET</timeZone>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+<!--            <plugin>-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <version>${resources.plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-resources</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>${project.basedir}/target/${project.build.finalName}/docs</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    <directory>${project.basedir}/swagger/docs</directory>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>com.google.code.maven-replacer-plugin</groupId>-->
+<!--                <artifactId>replacer</artifactId>-->
+<!--                <version>${replacer.plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>replace-swagger-json-location</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>replace</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <file>${project.build.directory}/${project.build.finalName}/docs/swagger-initializer.js</file>-->
+<!--                    <replacements>-->
+<!--                        <replacement>-->
+<!--                            <token>https://petstore.swagger.io/v2/swagger.json</token>-->
+<!--                            <value>/${project.build.finalName}/api/swagger.json</value>-->
+<!--                        </replacement>-->
+<!--                    </replacements>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler.plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                       <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                           <path>
+                               <groupId>org.mapstruct</groupId>
+                               <artifactId>mapstruct-processor</artifactId>
+                               <version>${mapstruct.version}</version>
+                           </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+<!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
+                    <archive>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Build-Time>${build.time}</Build-Time>
+                            <GIT-Revision>${git.commit.time}</GIT-Revision>
+                        </manifestEntries>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 
     <profiles>
@@ -173,10 +340,11 @@
                                 </goals>
                                 <configuration>
                                     <overwrite>true</overwrite>
-                                    <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/</outputDirectory>
+<!--                                    <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/</outputDirectory>-->
+                                    <outputDirectory>${project.build.directory}/${project.build.finalName}/</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.basedir}/${angular.project.location}/dist/nso</directory>
+                                            <directory>${project.basedir}/${angular.project.location}/dist/frontend</directory>
                                         </resource>
                                     </resources>
                                 </configuration>
@@ -207,6 +375,18 @@
                         <configuration>
                             <dateFormat>yyyyMMddHHmmss</dateFormat>
                             <dateFormatTimeZone>GMT+1</dateFormatTimeZone>
+                            <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                            <verbose>true</verbose>
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <excludeProperties>
+                                <!--                                <excludeProperty>git.user.*</excludeProperty>-->
+                                <excludeProperty>git.build.host</excludeProperty>
+                                <excludeProperty>git.build.user.*</excludeProperty>
+                                <!--                                <excludeProperty>git.commit.id.*</excludeProperty>-->
+                                <excludeProperty>git.commit.message.short</excludeProperty>
+                                <excludeProperty>git.commit.user.*</excludeProperty>
+                                <excludeProperty>git.remote.*</excludeProperty>
+                            </excludeProperties>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -214,144 +394,7 @@
         </profile>
     </profiles>
 
-    <build>
-        <finalName>wls</finalName>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <targetPath>${project.build.directory}/${project.artifactId}-${project.version}/assets/info</targetPath>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/version.json</include>
-                </includes>
-            </resource>
-            <resource>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>dynamic/**</exclude>
-                </excludes>
-            </resource>
-        </resources>
 
-        <plugins>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${basedir}</directory>
-                            <includes>
-                                <include>frontend/coverage/**</include>
-                                <include>frontend/dist/**</include>
-                                <!--<include>frontend/node_modules/**</include>-->
-                            </includes>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build.helper.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${sources.generated.location}</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-<!--            <plugin>-->
-<!--                <artifactId>maven-resources-plugin</artifactId>-->
-<!--                <version>${resources.plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>copy-resources</id>-->
-<!--                        <phase>prepare-package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>copy-resources</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <outputDirectory>${project.basedir}/target/${project.build.finalName}/docs</outputDirectory>-->
-<!--                            <resources>-->
-<!--                                <resource>-->
-<!--                                    <directory>${project.basedir}/swagger/docs</directory>-->
-<!--                                </resource>-->
-<!--                            </resources>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--            <plugin>-->
-<!--                <groupId>com.google.code.maven-replacer-plugin</groupId>-->
-<!--                <artifactId>replacer</artifactId>-->
-<!--                <version>${replacer.plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>replace-swagger-json-location</id>-->
-<!--                        <phase>prepare-package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>replace</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <file>${project.build.directory}/${project.build.finalName}/docs/swagger-initializer.js</file>-->
-<!--                    <replacements>-->
-<!--                        <replacement>-->
-<!--                            <token>https://petstore.swagger.io/v2/swagger.json</token>-->
-<!--                            <value>/${project.build.finalName}/api/swagger.json</value>-->
-<!--                        </replacement>-->
-<!--                    </replacements>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler.plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                       <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                           <path>
-                               <groupId>org.mapstruct</groupId>
-                               <artifactId>mapstruct-processor</artifactId>
-                               <version>${mapstruct.version}</version>
-                           </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
-                <configuration>
-                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
 
     <dependencies>
 <!--        <dependency>-->

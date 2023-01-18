@@ -1,0 +1,8 @@
+{
+  "version": "1.2.3",
+  "buildTime": "${build.time}",
+  "gitRevision": "${git.commit.time}",
+  "gitCommitId": "${git.commit.id}",
+  "gitBranch": "${git.branch}",
+  "gitBuildNumber": "${git.build.number}"
+}
